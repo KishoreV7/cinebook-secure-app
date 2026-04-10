@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Bookings - CineBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Home</a>
+    <a href="/movies">Movies</a>
+    <a href="/my-bookings">My Bookings</a>
+    <a href="/logout">Logout</a>
+  </nav>
+
+  <div class="container">
+    <h1>🎟️ My Bookings</h1>
+
+    <% if (bookings.length === 0) { %>
+      <p>You have no bookings yet. <a href="/movies">Browse movies</a></p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Seats</th>
+            <th>Total Price</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% bookings.forEach(function(booking) { %>
+            <tr>
+              <td><%= booking.movieTitle %></td>
+              <td><%= booking.seats %></td>
+              <td>€<%= booking.totalPrice %></td>
+              <td><%= new Date(booking.date).toLocaleDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>

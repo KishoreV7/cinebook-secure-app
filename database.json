@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "id": 1775823731543,
+      "username": "testuser",
+      "email": "test@test.com",
+      "password": "password123",
+      "role": "admin"
+    }
+  ],
+  "movies": [
+    {
+      "id": 1,
+      "title": "Avengers Endgame",
+      "genre": "Action",
+      "price": 12.5,
+      "seats": 49
+    },
+    {
+      "id": 2,
+      "title": "The Lion King",
+      "genre": "Animation",
+      "price": 10,
+      "seats": 30
+    },
+    {
+      "id": 3,
+      "title": "Inception",
+      "genre": "Sci-Fi",
+      "price": 11,
+      "seats": 40
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1775823818785,
+      "userId": 1775823731543,
+      "username": "testuser",
+      "movieTitle": "Avengers Endgame",
+      "seats": "1",
+      "totalPrice": 12.5,
+      "date": "2026-04-10T12:23:38.785Z"
+    }
+  ]
+}

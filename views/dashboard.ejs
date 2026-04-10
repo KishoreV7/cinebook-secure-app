@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - CineBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Home</a>
+    <a href="/movies">Movies</a>
+    <a href="/my-bookings">My Bookings</a>
+    <a href="/admin">Admin Panel</a>
+    <a href="/logout">Logout</a>
+  </nav>
+
+  <div class="container">
+    <h1>Welcome, <%= user.username %>! 👋</h1>
+    <p>Your role: <strong><%= user.role %></strong></p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>🎬 Browse Movies</h3>
+        <p>See what's showing now</p>
+        <a href="/movies" class="btn">View Movies</a>
+      </div>
+      <div class="card">
+        <h3>🎟️ My Bookings</h3>
+        <p>See your booked tickets</p>
+        <a href="/my-bookings" class="btn">My Bookings</a>
+      </div>
+      <% if (user.role === 'admin') { %>
+      <div class="card">
+        <h3>⚙️ Admin Panel</h3>
+        <p>Manage movies</p>
+        <a href="/admin" class="btn">Go to Admin</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - CineBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Home</a>
+    <a href="/movies">Movies</a>
+    <a href="/logout">Logout</a>
+  </nav>
+
+  <div class="container">
+    <h1>⚙️ Admin Panel</h1>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <h2>Add New Movie</h2>
+    <form action="/admin/add-movie" method="POST">
+      <input type="text" name="title" placeholder="Movie title" required>
+      <input type="text" name="genre" placeholder="Genre" required>
+      <input type="number" name="price" placeholder="Price (€)" step="0.01" required>
+      <input type="number" name="seats" placeholder="Available seats" required>
+      <button type="submit" class="btn">Add Movie</button>
+    </form>
+
+    <h2>Current Movies</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Genre</th>
+          <th>Price</th>
+          <th>Seats</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% movies.forEach(function(movie) { %>
+          <tr>
+            <td><%= movie.title %></td>
+            <td><%= movie.genre %></td>
+            <td>€<%= movie.price %></td>
+            <td><%= movie.seats %></td>
+            <td>
+              <form action="/admin/delete-movie" method="POST">
+                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - CineBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 CineBook</h1>
+    <h2>Create Account</h2>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <label>Username:</label>
+      <input type="text" name="username" required placeholder="Choose a username">
+
+      <label>Email:</label>
+      <input type="text" name="email" placeholder="Enter email">
+
+      <label>Password:</label>
+      <input type="password" name="password" required placeholder="Choose a password">
+
+      <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Login here</a></p>
+  </div>
+</body>
+</html>
