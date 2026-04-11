@@ -169,6 +169,15 @@ app.get('/admin', (req, res) => {
   res.render('admin', { movies: db.movies, user: req.session.user, error: null });
 });
 
+app.use((req, res) => {
+  res.status(404).render('error', { message: 'Page not found!' });
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).render('error', { message: 'Something went wrong!' });
+});
+
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
+
