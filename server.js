@@ -82,8 +82,10 @@ app.get('/dashboard', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/login');
+  req.session.destroy((err) => {
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  });
 });
 
 app.get('/movies', (req, res) => {
@@ -129,6 +131,7 @@ app.get('/my-bookings', (req, res) => {
 
 app.post('/admin/add-movie', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
+  if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const { title, genre, price, seats } = req.body;
   const db = getDB();
@@ -148,6 +151,7 @@ app.post('/admin/add-movie', (req, res) => {
 
 app.post('/admin/delete-movie', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
+  if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const { movieId } = req.body;
   const db = getDB();
@@ -158,6 +162,8 @@ app.post('/admin/delete-movie', (req, res) => {
 
 app.get('/admin', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
+  console.log('User trying to access admin:', req.session.user);
+  if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const db = getDB();
   res.render('admin', { movies: db.movies, user: req.session.user, error: null });

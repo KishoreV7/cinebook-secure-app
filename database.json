@@ -6,6 +6,20 @@
       "email": "test@test.com",
       "password": "password123",
       "role": "admin"
+    },
+    {
+      "id": 1775927525593,
+      "username": "normaluser",
+      "email": "normaluser@gmail.com",
+      "password": "test123",
+      "role": "user"
+    },
+    {
+      "id": 1775927868801,
+      "username": "Jilohuser",
+      "email": "Jiloh@test.com",
+      "password": "test123",
+      "role": "user"
     }
   ],
   "movies": [
@@ -14,7 +28,7 @@
       "title": "Avengers Endgame",
       "genre": "Action",
       "price": 12.5,
-      "seats": 48
+      "seats": 47
     },
     {
       "id": 2,
@@ -49,6 +63,15 @@
       "seats": "1",
       "totalPrice": 12.5,
       "date": "2026-04-11T16:06:05.587Z"
+    },
+    {
+      "id": 1775926882544,
+      "userId": 1775823731543,
+      "username": "testuser",
+      "movieTitle": "Avengers Endgame",
+      "seats": "1",
+      "totalPrice": 12.5,
+      "date": "2026-04-11T17:01:22.544Z"
     }
   ]
 }
