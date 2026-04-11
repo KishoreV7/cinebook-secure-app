@@ -7,26 +7,31 @@
 </head>
 <body>
   <nav>
-    <a href="/dashboard">Home</a>
+    <a href="/dashboard">🎬 CineBook</a>
     <a href="/movies">Movies</a>
+    <a href="/admin">Admin Panel</a>
     <a href="/logout">Logout</a>
   </nav>
 
   <div class="container">
-    <h1>⚙️ Admin Panel</h1>
+    <div class="page-header">
+      <h1>⚙️ Admin Panel</h1>
+    </div>
 
     <% if (error) { %>
       <p class="error"><%= error %></p>
     <% } %>
 
-    <h2>Add New Movie</h2>
-    <form action="/admin/add-movie" method="POST">
-      <input type="text" name="title" placeholder="Movie title" required>
-      <input type="text" name="genre" placeholder="Genre" required>
-      <input type="number" name="price" placeholder="Price (€)" step="0.01" required>
-      <input type="number" name="seats" placeholder="Available seats" required>
-      <button type="submit" class="btn">Add Movie</button>
-    </form>
+    <div class="admin-form">
+      <h2>Add New Movie</h2>
+      <form action="/admin/add-movie" method="POST">
+        <input type="text" name="title" placeholder="Movie title" required>
+        <input type="text" name="genre" placeholder="Genre" required>
+        <input type="number" name="price" placeholder="Price (€)" step="0.01" required>
+        <input type="number" name="seats" placeholder="Available seats" required>
+        <button type="submit" class="btn" style="margin-top:10px">Add Movie</button>
+      </form>
+    </div>
 
     <h2>Current Movies</h2>
     <table>

@@ -6,28 +6,27 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🎬 CineBook</h1>
-    <h2>Create Account</h2>
+  <div class="auth-wrapper">
+    <div class="auth-box">
+      <h1>🎬 CineBook</h1>
+      <h2>Create your account</h2>
 
-    <% if (error) { %>
-      <p class="error"><%= error %></p>
-    <% } %>
+      <% if (error) { %>
+        <p class="error"><%= error %></p>
+      <% } %>
 
-    <form action="/register" method="POST">
-      <label>Username:</label>
-      <input type="text" name="username" required placeholder="Choose a username">
+      <form action="/register" method="POST">
+        <label>Username</label>
+        <input type="text" name="username" required placeholder="Choose a username">
+        <label>Email</label>
+        <input type="text" name="email" placeholder="Enter your email">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Choose a password">
+        <button type="submit" class="btn">Create Account</button>
+      </form>
 
-      <label>Email:</label>
-      <input type="text" name="email" placeholder="Enter email">
-
-      <label>Password:</label>
-      <input type="password" name="password" required placeholder="Choose a password">
-
-      <button type="submit">Register</button>
-    </form>
-
-    <p>Already have an account? <a href="/login">Login here</a></p>
+      <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
   </div>
 </body>
 </html>

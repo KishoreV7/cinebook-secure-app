@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Confirmed - CineBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Home</a>
+    <a href="/movies">Movies</a>
+    <a href="/my-bookings">My Bookings</a>
+    <a href="/logout">Logout</a>
+  </nav>
+
+  <div class="container">
+    <div class="confirmation-box">
+      <h1>🎉 Booking Confirmed!</h1>
+      <p>Thank you for booking with CineBook!</p>
+
+      <div class="booking-details">
+        <h2>Booking Details</h2>
+        <table>
+          <tr>
+            <td><strong>Movie:</strong></td>
+            <td><%= booking.movieTitle %></td>
+          </tr>
+          <tr>
+            <td><strong>Seats:</strong></td>
+            <td><%= booking.seats %></td>
+          </tr>
+          <tr>
+            <td><strong>Total Price:</strong></td>
+            <td>€<%= booking.totalPrice %></td>
+          </tr>
+          <tr>
+            <td><strong>Booking ID:</strong></td>
+            <td><%= booking.id %></td>
+          </tr>
+          <tr>
+            <td><strong>Date:</strong></td>
+            <td><%= new Date(booking.date).toLocaleDateString() %></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="action-buttons">
+        <a href="/movies" class="btn">Book Another Movie</a>
+        <a href="/my-bookings" class="btn">View All Bookings</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

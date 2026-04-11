@@ -7,22 +7,24 @@
 </head>
 <body>
   <nav>
-    <a href="/dashboard">Home</a>
+    <a href="/dashboard">🎬 CineBook</a>
     <a href="/movies">Movies</a>
     <a href="/my-bookings">My Bookings</a>
     <a href="/logout">Logout</a>
   </nav>
 
   <div class="container">
-    <h1>🎬 Now Showing</h1>
+    <div class="page-header">
+      <h1>🎬 Now Showing</h1>
+    </div>
 
     <div class="card-grid">
       <% movies.forEach(function(movie) { %>
         <div class="card">
           <h3><%= movie.title %></h3>
           <p>Genre: <%= movie.genre %></p>
-          <p>Price: €<%= movie.price %></p>
-          <p>Seats available: <%= movie.seats %></p>
+          <p class="movie-card-price">€<%= movie.price %></p>
+          <span class="seats-badge">🪑 <%= movie.seats %> seats left</span>
 
           <form action="/book" method="POST">
             <input type="hidden" name="movieId" value="<%= movie.id %>">

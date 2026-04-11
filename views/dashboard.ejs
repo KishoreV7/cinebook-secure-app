@@ -7,32 +7,39 @@
 </head>
 <body>
   <nav>
-    <a href="/dashboard">Home</a>
+    <a href="/dashboard">🎬 CineBook</a>
     <a href="/movies">Movies</a>
     <a href="/my-bookings">My Bookings</a>
+    <% if (user.role === 'admin') { %>
     <a href="/admin">Admin Panel</a>
+    <% } %>
     <a href="/logout">Logout</a>
   </nav>
 
   <div class="container">
-    <h1>Welcome, <%= user.username %>! 👋</h1>
-    <p>Your role: <strong><%= user.role %></strong></p>
+    <div class="welcome-banner">
+      <div>
+        <h1>Welcome back, <%= user.username %>! 👋</h1>
+        <p>What would you like to do today?</p>
+      </div>
+      <span class="role-badge"><%= user.role %></span>
+    </div>
 
     <div class="card-grid">
       <div class="card">
         <h3>🎬 Browse Movies</h3>
-        <p>See what's showing now</p>
+        <p>See what's showing now and book your tickets</p>
         <a href="/movies" class="btn">View Movies</a>
       </div>
       <div class="card">
         <h3>🎟️ My Bookings</h3>
-        <p>See your booked tickets</p>
+        <p>View all your current ticket bookings</p>
         <a href="/my-bookings" class="btn">My Bookings</a>
       </div>
       <% if (user.role === 'admin') { %>
       <div class="card">
         <h3>⚙️ Admin Panel</h3>
-        <p>Manage movies</p>
+        <p>Add or remove movies from the system</p>
         <a href="/admin" class="btn">Go to Admin</a>
       </div>
       <% } %>

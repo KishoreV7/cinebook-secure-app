@@ -14,7 +14,7 @@
       "title": "Avengers Endgame",
       "genre": "Action",
       "price": 12.5,
-      "seats": 49
+      "seats": 48
     },
     {
       "id": 2,
@@ -40,6 +40,15 @@
       "seats": "1",
       "totalPrice": 12.5,
       "date": "2026-04-10T12:23:38.785Z"
+    },
+    {
+      "id": 1775923565587,
+      "userId": 1775823731543,
+      "username": "testuser",
+      "movieTitle": "Avengers Endgame",
+      "seats": "1",
+      "totalPrice": 12.5,
+      "date": "2026-04-11T16:06:05.587Z"
     }
   ]
 }
