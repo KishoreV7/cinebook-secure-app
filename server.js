@@ -3,6 +3,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -34,13 +35,13 @@ app.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const db = getDB();
 
-  const user = db.users.find(u => u.username === username && u.password === password);
+  const user = db.users.find(u => u.username === username);
 
-  if (user) {
+  if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = { id: user.id, username: user.username, role: user.role };
     res.redirect('/dashboard');
   } else {
@@ -52,7 +53,7 @@ app.get('/register', (req, res) => {
   res.render('register', { error: null });
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password, email } = req.body;
   const db = getDB();
 
@@ -61,11 +62,13 @@ app.post('/register', (req, res) => {
     return res.render('register', { error: 'Username already taken' });
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const newUser = {
     id: Date.now(),
     username: username,
     email: email,
-    password: password,
+    password: hashedPassword,
     role: 'user'
   };
 
@@ -162,7 +165,6 @@ app.post('/admin/delete-movie', (req, res) => {
 
 app.get('/admin', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
-  console.log('User trying to access admin:', req.session.user);
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const db = getDB();
@@ -180,4 +182,3 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
-
