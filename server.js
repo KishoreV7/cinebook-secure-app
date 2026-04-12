@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const { body, validationResult } = require('express-validator');
 
 const app = express();
 
@@ -35,7 +36,15 @@ app.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', [
+  body('username').trim().escape(),
+  body('password').trim().escape()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('login', { error: 'Invalid input' });
+  }
+
   const { username, password } = req.body;
   const db = getDB();
 
@@ -53,7 +62,16 @@ app.get('/register', (req, res) => {
   res.render('register', { error: null });
 });
 
-app.post('/register', async (req, res) => {
+app.post('/register', [
+  body('username').trim().isLength({ min: 3 }).escape(),
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 })
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('register', { error: errors.array()[0].msg });
+  }
+
   const { username, password, email } = req.body;
   const db = getDB();
 

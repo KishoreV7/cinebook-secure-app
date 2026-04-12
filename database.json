@@ -6,6 +6,13 @@
       "email": "Maja@kishore.com",
       "password": "$2b$10$sWIIjkwf1b8UDnhdJHvoS.BqLG3joG1EZq0wrhTGbTtBm1SbhjY/m",
       "role": "admin"
+    },
+    {
+      "id": 1776008785628,
+      "username": "testuser",
+      "email": "test@test.com",
+      "password": "$2b$10$QoAv2cH5qj726.0HM77IIO1fOLnxVTEG8621pmnB2Wau72PZrW6Vu",
+      "role": "user"
     }
   ],
   "movies": [
