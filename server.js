@@ -14,9 +14,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
-  secret: 'mysecret',
+  secret: 'cinebook$secret#2024!xK9mN3pQ',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    maxAge: 1000 * 60 * 60
+  }
 }));
 
 function getDB() {
