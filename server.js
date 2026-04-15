@@ -140,23 +140,32 @@ app.post('/book', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   const { movieId, seats } = req.body;
+  const seatCount = parseInt(seats);
   const db = getDB();
 
   const movie = db.movies.find(m => m.id == movieId);
   if (!movie) return res.redirect('/movies');
+
+  if (isNaN(seatCount) || seatCount < 1 || seatCount > 10) {
+    return res.redirect('/movies');
+  }
+
+  if (seatCount > movie.seats) {
+    return res.redirect('/movies');
+  }
 
   const booking = {
     id: Date.now(),
     userId: req.session.user.id,
     username: req.session.user.username,
     movieTitle: movie.title,
-    seats: seats,
-    totalPrice: movie.price * seats,
+    seats: seatCount,
+    totalPrice: movie.price * seatCount,
     date: new Date().toISOString()
   };
 
   db.bookings.push(booking);
-  movie.seats -= seats;
+  movie.seats -= seatCount;
   saveDB(db);
 
   res.render('booking-confirmation', { booking: booking });
