@@ -25,6 +25,7 @@
     <div class="admin-form">
       <h2>Add New Movie</h2>
       <form action="/admin/add-movie" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="text" name="title" placeholder="Movie title" required>
         <input type="text" name="genre" placeholder="Genre" required>
         <input type="number" name="price" placeholder="Price (€)" step="0.01" required>
@@ -53,6 +54,7 @@
             <td><%= movie.seats %></td>
             <td>
               <form action="/admin/delete-movie" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="movieId" value="<%= movie.id %>">
                 <button type="submit" class="btn btn-danger">Delete</button>
               </form>

@@ -27,6 +27,7 @@
           <span class="seats-badge">🪑 <%= movie.seats %> seats left</span>
 
           <form action="/book" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input type="hidden" name="movieId" value="<%= movie.id %>">
             <label>Number of Seats:</label>
             <input type="number" name="seats" value="1" min="1">

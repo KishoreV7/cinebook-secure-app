@@ -6,6 +6,8 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const helmet = require('helmet');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: false });
 
 const app = express();
 
@@ -13,6 +15,7 @@ app.use(helmet());
 app.use(helmet.xssFilter());
 app.use(helmet.noSniff());
 app.use(helmet.frameguard({ action: 'deny' }));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,17 +45,17 @@ app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
-app.get('/login', (req, res) => {
-  res.render('login', { error: null });
+app.get('/login', csrfProtection, (req, res) => {
+  res.render('login', { error: null, csrfToken: req.csrfToken() });
 });
 
-app.post('/login', [
+app.post('/login', csrfProtection, [
   body('username').trim().escape(),
   body('password').trim().escape()
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.render('login', { error: 'Invalid input' });
+    return res.render('login', { error: 'Invalid input', csrfToken: req.csrfToken() });
   }
 
   const { username, password } = req.body;
@@ -64,22 +67,22 @@ app.post('/login', [
     req.session.user = { id: user.id, username: user.username, role: user.role };
     res.redirect('/dashboard');
   } else {
-    res.render('login', { error: 'Invalid username or password' });
+    res.render('login', { error: 'Invalid username or password', csrfToken: req.csrfToken() });
   }
 });
 
-app.get('/register', (req, res) => {
-  res.render('register', { error: null });
+app.get('/register', csrfProtection, (req, res) => {
+  res.render('register', { error: null, csrfToken: req.csrfToken() });
 });
 
-app.post('/register', [
+app.post('/register', csrfProtection, [
   body('username').trim().isLength({ min: 3 }).escape(),
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 })
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.render('register', { error: errors.array()[0].msg });
+    return res.render('register', { error: errors.array()[0].msg, csrfToken: req.csrfToken() });
   }
 
   const { username, password, email } = req.body;
@@ -87,7 +90,7 @@ app.post('/register', [
 
   const exists = db.users.find(u => u.username === username);
   if (exists) {
-    return res.render('register', { error: 'Username already taken' });
+    return res.render('register', { error: 'Username already taken', csrfToken: req.csrfToken() });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -119,14 +122,14 @@ app.get('/logout', (req, res) => {
   });
 });
 
-app.get('/movies', (req, res) => {
+app.get('/movies', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   const db = getDB();
-  res.render('movies', { movies: db.movies, user: req.session.user });
+  res.render('movies', { movies: db.movies, user: req.session.user, csrfToken: req.csrfToken() });
 });
 
-app.post('/book', (req, res) => {
+app.post('/book', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   const { movieId, seats } = req.body;
@@ -160,7 +163,7 @@ app.get('/my-bookings', (req, res) => {
   res.render('my-bookings', { bookings: myBookings, user: req.session.user });
 });
 
-app.post('/admin/add-movie', (req, res) => {
+app.post('/admin/add-movie', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
@@ -180,7 +183,7 @@ app.post('/admin/add-movie', (req, res) => {
   res.redirect('/admin');
 });
 
-app.post('/admin/delete-movie', (req, res) => {
+app.post('/admin/delete-movie', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
@@ -191,12 +194,12 @@ app.post('/admin/delete-movie', (req, res) => {
   res.redirect('/admin');
 });
 
-app.get('/admin', (req, res) => {
+app.get('/admin', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const db = getDB();
-  res.render('admin', { movies: db.movies, user: req.session.user, error: null });
+  res.render('admin', { movies: db.movies, user: req.session.user, error: null, csrfToken: req.csrfToken() });
 });
 
 app.use((req, res) => {

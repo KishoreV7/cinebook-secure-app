@@ -21,7 +21,7 @@
       "title": "Avengers Endgame",
       "genre": "Action",
       "price": 12.5,
-      "seats": 50
+      "seats": 48
     },
     {
       "id": 2,
@@ -36,7 +36,33 @@
       "genre": "Sci-Fi",
       "price": 11,
       "seats": 40
+    },
+    {
+      "id": 1776246518832,
+      "title": "Jana Nayagan",
+      "genre": "Political",
+      "price": 20,
+      "seats": 100
     }
   ],
-  "bookings": []
+  "bookings": [
+    {
+      "id": 1776246387507,
+      "userId": 1776008785628,
+      "username": "testuser",
+      "movieTitle": "Avengers Endgame",
+      "seats": "1",
+      "totalPrice": 12.5,
+      "date": "2026-04-15T09:46:27.507Z"
+    },
+    {
+      "id": 1776246402586,
+      "userId": 1776008785628,
+      "username": "testuser",
+      "movieTitle": "Avengers Endgame",
+      "seats": "1",
+      "totalPrice": 12.5,
+      "date": "2026-04-15T09:46:42.586Z"
+    }
+  ]
 }
