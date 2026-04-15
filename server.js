@@ -7,7 +7,14 @@ const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const helmet = require('helmet');
 const csrf = require('csurf');
+const rateLimit = require('express-rate-limit');
+
 const csrfProtection = csrf({ cookie: false });
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: 'Too many login attempts. Please try again after 15 minutes.'
+});
 
 const app = express();
 
@@ -49,7 +56,7 @@ app.get('/login', csrfProtection, (req, res) => {
   res.render('login', { error: null, csrfToken: req.csrfToken() });
 });
 
-app.post('/login', csrfProtection, [
+app.post('/login', loginLimiter, csrfProtection, [
   body('username').trim().escape(),
   body('password').trim().escape()
 ], async (req, res) => {
@@ -213,3 +220,4 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
+

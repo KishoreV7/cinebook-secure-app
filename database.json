@@ -42,7 +42,7 @@
       "title": "Jana Nayagan",
       "genre": "Political",
       "price": 20,
-      "seats": 100
+      "seats": 80
     }
   ],
   "bookings": [
@@ -63,6 +63,15 @@
       "seats": "1",
       "totalPrice": 12.5,
       "date": "2026-04-15T09:46:42.586Z"
+    },
+    {
+      "id": 1776246689722,
+      "userId": 1776008785628,
+      "username": "testuser",
+      "movieTitle": "Jana Nayagan",
+      "seats": "20",
+      "totalPrice": 400,
+      "date": "2026-04-15T09:51:29.722Z"
     }
   ]
 }
