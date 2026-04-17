@@ -33,6 +33,7 @@ The primary security focus of this project is to demonstrate common web applicat
 
 ## Project Structure
 
+```
 cinebook-secure-app/
 │
 ├── public/                  # Static files served to the browser
@@ -53,6 +54,7 @@ cinebook-secure-app/
 ├── server.js                # Main application file with all routes
 ├── package.json             # Project dependencies and scripts
 └── README.md                # Project documentation
+```
 
 ---
 
