@@ -32,7 +32,7 @@ The primary security focus of this project is to demonstrate common web applicat
 ---
 
 ## Project Structure
-```
+
 cinebook-secure-app/
 │
 ├── public/                  # Static files served to the browser
@@ -49,11 +49,11 @@ cinebook-secure-app/
 │   ├── admin.ejs            # Admin panel for managing movies
 │   └── error.ejs            # Custom error page
 │
-├── database.json            # JSON file acting as the database
+├── db.js                    # SQLite database setup and table creation
 ├── server.js                # Main application file with all routes
 ├── package.json             # Project dependencies and scripts
 └── README.md                # Project documentation
-```
+
 ---
 
 ## Setup and Installation Instructions
@@ -74,26 +74,13 @@ cd cinebook-secure-app
 npm install
 ```
 
-### Step 3 — Set Up the Database
-Make sure database.json exists in the root folder with this content:
-```json
-{
-  "users": [],
-  "movies": [
-    { "id": 1, "title": "Avengers Endgame", "genre": "Action", "price": 12.50, "seats": 50 },
-    { "id": 2, "title": "The Lion King", "genre": "Animation", "price": 10.00, "seats": 30 },
-    { "id": 3, "title": "Inception", "genre": "Sci-Fi", "price": 11.00, "seats": 40 }
-  ],
-  "bookings": []
-}
-```
-
-### Step 4 — Run the Application
+### Step 3 — Run the Application
 ```bash
 node server.js
 ```
+The SQLite database will be created automatically on first run.
 
-### Step 5 — Open in Browser
+### Step 4 — Open in Browser
 http://localhost:3000
 
 ---
@@ -124,10 +111,14 @@ http://localhost:3000
 2. All your bookings will be listed with movie name, seats, price and date
 
 ### Admin Access
-1. Manually set a user's role to admin in database.json
-2. Login with that account
-3. Click Admin Panel in the navigation bar
-4. Add new movies or delete existing ones
+1. Register a new account
+2. Run this command to make the user admin:
+```bash
+node -e "const db = require('./db'); db.prepare('UPDATE users SET role = ? WHERE username = ?').run('admin', 'yourusername'); console.log('Done!');"
+```
+3. Login with that account
+4. Click Admin Panel in the navigation bar
+5. Add new movies or delete existing ones
 
 ---
 
@@ -173,6 +164,11 @@ http://localhost:3000
 - **Fix:** Seat count must be between 1 and 10, cannot exceed available seats
 - **Result:** Invalid booking attempts are rejected server-side
 
+### 9. SQLite Database
+- **Vulnerability:** JSON file stored data as plain text, readable by anyone
+- **Fix:** Migrated to SQLite relational database with structured tables
+- **Result:** Data stored in binary format with proper table structure and SQL queries
+
 ---
 
 ## Testing Process
@@ -181,7 +177,7 @@ http://localhost:3000
 
 | Test | Method | Expected Result | Status |
 |------|--------|-----------------|--------|
-| Plain text password | Check database.json after register | Password shown as bcrypt hash | ✅ Pass |
+| Plain text password | Check database after register | Password shown as bcrypt hash | ✅ Pass |
 | Short username | Enter 2 character username | Validation error shown | ✅ Pass |
 | Short password | Enter 3 character password | Validation error shown | ✅ Pass |
 | Invalid email | Enter text without @ | Validation error shown | ✅ Pass |
@@ -191,6 +187,7 @@ http://localhost:3000
 | CSRF token | Inspect form in DevTools | Hidden _csrf field present | ✅ Pass |
 | XSS headers | Check response headers | Security headers present | ✅ Pass |
 | Session expiry | Check cookie settings | httpOnly flag set | ✅ Pass |
+| SQLite database | Check project files | No plain text database file | ✅ Pass |
 
 ### Tools Used
 - **Browser DevTools** — Inspecting CSRF tokens and security headers
@@ -201,15 +198,17 @@ http://localhost:3000
 
 ## Contributions and References
 
-### Frameworks and Libraries
-- [Express.js](https://expressjs.com) — Web application framework
-- [EJS](https://ejs.co) — Embedded JavaScript templating
-- [bcrypt](https://www.npmjs.com/package/bcrypt) — Password hashing
-- [express-validator](https://express-validator.github.io) — Input validation
-- [express-session](https://www.npmjs.com/package/express-session) — Session management
-- [Helmet.js](https://helmetjs.github.io) — HTTP security headers
-- [csurf](https://www.npmjs.com/package/csurf) — CSRF protection
-- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) — Rate limiting
+### Technologies Used
+- Node.js — Runtime environment
+- Express.js — Web application framework
+- EJS — Embedded JavaScript templating
+- SQLite (better-sqlite3) — Database
+- bcrypt — Password hashing
+- express-validator — Input validation
+- express-session — Session management
+- Helmet.js — HTTP security headers
+- csurf — CSRF protection
+- express-rate-limit — Rate limiting
 
 ### References
 - OWASP Top 10 — https://owasp.org/www-project-top-ten
@@ -217,19 +216,9 @@ http://localhost:3000
 - Express.js Security Best Practices — https://expressjs.com/en/advanced/best-practice-security.html
 - bcrypt Documentation — https://www.npmjs.com/package/bcrypt
 - Helmet.js Documentation — https://helmetjs.github.io
+- better-sqlite3 Documentation — https://www.npmjs.com/package/better-sqlite3
 
 ---
 
 *Developed by Kishore | National College of Ireland | Secure Web Development Module | 2026*
-Save with Ctrl+S then commit:
-bashgit add .
-git commit -m "docs: update README with full project documentation
 
-- Added project overview and security focus
-- Listed all features and security objectives
-- Added full project structure explanation
-- Added setup and installation instructions
-- Added usage guidelines
-- Documented all security improvements
-- Added testing process and results table
-- Added contributions and references"
