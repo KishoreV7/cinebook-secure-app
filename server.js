@@ -223,6 +223,9 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).render('error', { message: 'Invalid form submission. Please try again.' });
+  }
   res.status(500).render('error', { message: 'Something went wrong!' });
 });
 
