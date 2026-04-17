@@ -1,13 +1,13 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const helmet = require('helmet');
 const csrf = require('csurf');
 const rateLimit = require('express-rate-limit');
+const db = require('./db');
 
 const csrfProtection = csrf({ cookie: false });
 const loginLimiter = rateLimit({
@@ -39,15 +39,6 @@ app.use(session({
   }
 }));
 
-function getDB() {
-  const data = fs.readFileSync('./database.json', 'utf8');
-  return JSON.parse(data);
-}
-
-function saveDB(data) {
-  fs.writeFileSync('./database.json', JSON.stringify(data, null, 2));
-}
-
 app.get('/', (req, res) => {
   res.redirect('/login');
 });
@@ -66,9 +57,7 @@ app.post('/login', loginLimiter, csrfProtection, [
   }
 
   const { username, password } = req.body;
-  const db = getDB();
-
-  const user = db.users.find(u => u.username === username);
+  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
 
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = { id: user.id, username: user.username, role: user.role };
@@ -93,25 +82,15 @@ app.post('/register', csrfProtection, [
   }
 
   const { username, password, email } = req.body;
-  const db = getDB();
 
-  const exists = db.users.find(u => u.username === username);
+  const exists = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
   if (exists) {
     return res.render('register', { error: 'Username already taken', csrfToken: req.csrfToken() });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  db.prepare('INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)').run(username, email, hashedPassword, 'user');
 
-  const newUser = {
-    id: Date.now(),
-    username: username,
-    email: email,
-    password: hashedPassword,
-    role: 'user'
-  };
-
-  db.users.push(newUser);
-  saveDB(db);
   res.redirect('/login');
 });
 
@@ -132,8 +111,8 @@ app.get('/logout', (req, res) => {
 app.get('/movies', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
-  const db = getDB();
-  res.render('movies', { movies: db.movies, user: req.session.user, csrfToken: req.csrfToken() });
+  const movies = db.prepare('SELECT * FROM movies').all();
+  res.render('movies', { movies: movies, user: req.session.user, csrfToken: req.csrfToken() });
 });
 
 app.post('/book', csrfProtection, (req, res) => {
@@ -141,9 +120,8 @@ app.post('/book', csrfProtection, (req, res) => {
 
   const { movieId, seats } = req.body;
   const seatCount = parseInt(seats);
-  const db = getDB();
 
-  const movie = db.movies.find(m => m.id == movieId);
+  const movie = db.prepare('SELECT * FROM movies WHERE id = ?').get(movieId);
   if (!movie) return res.redirect('/movies');
 
   if (isNaN(seatCount) || seatCount < 1 || seatCount > 10) {
@@ -154,19 +132,27 @@ app.post('/book', csrfProtection, (req, res) => {
     return res.redirect('/movies');
   }
 
+  const date = new Date().toISOString();
+  const totalPrice = movie.price * seatCount;
+
+  db.prepare('INSERT INTO bookings (userId, username, movieTitle, seats, totalPrice, date) VALUES (?, ?, ?, ?, ?, ?)').run(
+    req.session.user.id,
+    req.session.user.username,
+    movie.title,
+    seatCount,
+    totalPrice,
+    date
+  );
+
+  db.prepare('UPDATE movies SET seats = seats - ? WHERE id = ?').run(seatCount, movieId);
+
   const booking = {
-    id: Date.now(),
-    userId: req.session.user.id,
-    username: req.session.user.username,
     movieTitle: movie.title,
     seats: seatCount,
-    totalPrice: movie.price * seatCount,
-    date: new Date().toISOString()
+    totalPrice: totalPrice,
+    id: Date.now(),
+    date: date
   };
-
-  db.bookings.push(booking);
-  movie.seats -= seatCount;
-  saveDB(db);
 
   res.render('booking-confirmation', { booking: booking });
 });
@@ -174,8 +160,7 @@ app.post('/book', csrfProtection, (req, res) => {
 app.get('/my-bookings', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
-  const db = getDB();
-  const myBookings = db.bookings.filter(b => b.userId === req.session.user.id);
+  const myBookings = db.prepare('SELECT * FROM bookings WHERE userId = ?').all(req.session.user.id);
   res.render('my-bookings', { bookings: myBookings, user: req.session.user });
 });
 
@@ -184,18 +169,13 @@ app.post('/admin/add-movie', csrfProtection, (req, res) => {
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const { title, genre, price, seats } = req.body;
-  const db = getDB();
+  db.prepare('INSERT INTO movies (title, genre, price, seats) VALUES (?, ?, ?, ?)').run(
+    title,
+    genre,
+    parseFloat(price),
+    parseInt(seats)
+  );
 
-  const newMovie = {
-    id: Date.now(),
-    title: title,
-    genre: genre,
-    price: parseFloat(price),
-    seats: parseInt(seats)
-  };
-
-  db.movies.push(newMovie);
-  saveDB(db);
   res.redirect('/admin');
 });
 
@@ -204,9 +184,7 @@ app.post('/admin/delete-movie', csrfProtection, (req, res) => {
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
   const { movieId } = req.body;
-  const db = getDB();
-  db.movies = db.movies.filter(m => m.id != movieId);
-  saveDB(db);
+  db.prepare('DELETE FROM movies WHERE id = ?').run(movieId);
   res.redirect('/admin');
 });
 
@@ -214,8 +192,8 @@ app.get('/admin', csrfProtection, (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   if (req.session.user.role !== 'admin') return res.redirect('/dashboard');
 
-  const db = getDB();
-  res.render('admin', { movies: db.movies, user: req.session.user, error: null, csrfToken: req.csrfToken() });
+  const movies = db.prepare('SELECT * FROM movies').all();
+  res.render('admin', { movies: movies, user: req.session.user, error: null, csrfToken: req.csrfToken() });
 });
 
 app.use((req, res) => {
@@ -232,4 +210,3 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
-
